@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc, extract
-from models import Customer, Invoice, InvoiceItem, Track, Album, RecommendedPlaylist
+from models import Customer, Invoice, InvoiceItem, Track, Album, RecommendedPlaylist, Genre
 from collections import defaultdict
 from audit_and_monitoring import (
     monitor_query_performance,
@@ -22,9 +22,7 @@ class RecommendationService:
             self.session.query(InvoiceItem.TrackId)
             .join(Invoice)
             .filter(Invoice.CustomerId == customer_id)
-            .subquery()
         )
-
         # Любимые жанры
         favorite_genres = (
             self.session.query(Track.GenreId)
@@ -34,9 +32,7 @@ class RecommendationService:
             .group_by(Track.GenreId)
             .all()
         )
-
         genre_ids = [g[0] for g in favorite_genres]
-
         # Рекомендации
         recommendations = (
             self.session.query(Track)
@@ -106,11 +102,11 @@ class RecommendationService:
 
         similarities.sort(key=lambda x: x[1], reverse=True)
         similar = []
-        for cust_id, _ in similarities[:limit]:
+        for cust_id, similarity in similarities[:limit]:
             customer = (
                 self.session.query(Customer).filter(Customer.CustomerId == cust_id).first()
             )
-            similar.append({'id':customer.CustomerId, 'fname':customer.FirstName, 'lname':customer.LastName})
+            similar.append({'id':customer.CustomerId, 'fname':customer.FirstName, 'lname':customer.LastName, 'similarity':similarity})
         return similar
         # return [cust_id for cust_id, _ in similarities[:limit]]
     
@@ -129,7 +125,6 @@ class RecommendationService:
             self.session.query(InvoiceItem.TrackId)
             .join(Invoice, Invoice.InvoiceId == InvoiceItem.InvoiceId)
             .filter(Invoice.CustomerId == customer_id)
-            .subquery()
         )
 
         # популярные треки похожих клиентов
@@ -229,24 +224,27 @@ class RecommendationService:
 
             top_tracks = (
                 self.session.query(
+                    Track.TrackId,
                     Track.Name,
                     func.count(RecommendedPlaylist.track_id).label("times_recommended")
                 )
                 .join(RecommendedPlaylist, Track.TrackId == RecommendedPlaylist.track_id)
-                .group_by(Track.Name)
+                .group_by(Track.TrackId,Track.Name)
                 .order_by(desc("times_recommended"))
                 .limit(10)
                 .all()
             )
 
-            # Распределение по жанрам
+            # распределение по жанрам
             genre_distribution = (
                 self.session.query(
                     Track.GenreId,
+                    Genre.Name,
                     func.count().label("count")
                 )
                 .join(RecommendedPlaylist, Track.TrackId == RecommendedPlaylist.track_id)
-                .group_by(Track.GenreId)
+                .join(Genre, Track.GenreId == Genre.GenreId)
+                .group_by(Track.GenreId,Genre.Name)
                 .all()
             )
 
@@ -258,30 +256,20 @@ class RecommendationService:
                 .group_by(RecommendedPlaylist.customer_id)
                 .subquery()
             )
-            # Средняя длина плейлиста
+
             avg_playlist_length = (
-                self.session.query(
-                    func.avg(subq.c.track_count)
-                )
-                .select_from(
-                    self.session.query(
-                        RecommendedPlaylist.customer_id,
-                        func.count().label("track_count")
-                    )
-                    .group_by(RecommendedPlaylist.customer_id)
-                    .subquery()
-                )
+                self.session.query(func.avg(subq.c.track_count))
                 .scalar()
             )
 
             return {
                 "total_playlists": total_playlists,
                 "top_tracks": [
-                    {"name": t.Name, "times_recommended": t.times_recommended}
+                    {"id": t.TrackId,"name": t.Name, "times_recommended": t.times_recommended}
                     for t in top_tracks
                 ],
                 "genre_distribution": [
-                    {"genre_id": g.GenreId, "count": g.count}
+                    {"genre_id": g.GenreId, "name": g.Name, "count": g.count}
                     for g in genre_distribution
                 ],
                 "average_playlist_length": float(avg_playlist_length or 0)

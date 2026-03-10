@@ -17,6 +17,13 @@ from models import (
 def monitor_query_performance(func_to_monitor):
     @wraps(func_to_monitor)
     def wrapper(self, *args, **kwargs):
+
+        # если уже внутри мониторинга — просто выполняем функцию
+        if getattr(self, "_monitoring_active", False):
+            return func_to_monitor(self, *args, **kwargs)
+
+        self._monitoring_active = True
+
         start_time = time.time()
 
         result = func_to_monitor(self, *args, **kwargs)
@@ -37,7 +44,7 @@ def monitor_query_performance(func_to_monitor):
                 record.total_time += execution_time
                 record.max_time = max(record.max_time, execution_time)
                 record.min_time = min(record.min_time, execution_time)
-                record.last_executed = datetime.utcnow()
+                record.last_executed = datetime.now().astimezone()
             else:
                 record = QueryPerformance(
                     query_hash=sql_hash,
@@ -46,12 +53,13 @@ def monitor_query_performance(func_to_monitor):
                     total_time=execution_time,
                     max_time=execution_time,
                     min_time=execution_time,
-                    last_executed=datetime.utcnow()
+                    last_executed=datetime.now().astimezone()
                 )
                 self.session.add(record)
 
             self.session.flush()
-
+        print("\nВремя выполнения:", execution_time)
+        self._monitoring_active = False
         return result
     return wrapper
 
@@ -78,22 +86,6 @@ class PerformanceAnalyzer:
 
         return analysis
     
-    def suggest_indexes(self):
-        slow_queries = (
-            self.session.query(QueryPerformance)
-            .filter(QueryPerformance.max_time > 100)
-            .all()
-        )
-
-        suggestions = []
-
-        for q in slow_queries:
-            if "WHERE" in q.query_text.upper():
-                suggestions.append(
-                    f"-- Рассмотреть индекс для запроса: {q.query_text}"
-                )
-
-        return suggestions
     
 class AuditReportService:
 
@@ -146,7 +138,7 @@ class AuditCleanupService:
 
     def cleanup_old_audit_logs(self, days=90):
         try:
-            threshold = datetime.utcnow() - timedelta(days=days)
+            threshold = datetime.now().astimezone() - timedelta(days=days)
 
             old_logs = (
                 self.session.query(AuditLog)
@@ -195,21 +187,15 @@ class DatabaseMonitor:
                 ORDER BY pg_total_relation_size(relid) DESC
             """)
         ).fetchall()
-
         return result
 
     def check_index_health(self):
         result = self.session.execute(
             text("""
-                SELECT relname, idx_scan
+                SELECT relname, indexrelname, idx_scan
                 FROM pg_stat_user_indexes
+                ORDER BY idx_scan DESC
             """)
         ).fetchall()
 
         return result
-
-    def check_thresholds(self):
-        connections = self.active_connections()
-        if connections > 1000:
-            return "ALERT: Too many connections!"
-        return "OK"
