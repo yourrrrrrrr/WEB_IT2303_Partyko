@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторная 4 — JWT + RBAC Task Manager</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Лабораторная работа 4. Backend: http://localhost:3000</h1>
+    </header>
+
+    <section class="card">
+      <h2>1. Аутентификация</h2>
+      <div class="auth-grid">
+        <div>
+          <h3>Регистрация</h3>
+          <label>Email<br><input type="email" id="reg-email" placeholder="user@example.com"></label>
+          <label>Пароль<br><input type="password" id="reg-password" placeholder="минимум 8 символов"></label>
+          <button id="btn-register">Зарегистрироваться</button>
+        </div>
+        <div>
+          <h3>Вход</h3>
+          <label>Email<br><input type="email" id="login-email" placeholder="user@example.com"></label>
+          <label>Пароль<br><input type="password" id="login-password" placeholder="пароль"></label>
+          <button id="btn-login">Войти</button>
+          <button id="btn-logout" class="secondary">Выйти</button>
+        </div>
+        <div>
+          <h3>Текущий пользователь</h3>
+          <button id="btn-me">Обновить профиль</button>
+          <pre id="me-info" class="pre-block">Не авторизован</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Задачи</h2>
+      <div class="tasks-header">
+        <button id="btn-load-tasks">Загрузить задачи</button>
+        <span class="hint">user видит только свои задачи, manager/admin — все</span>
+      </div>
+
+      <div class="task-form">
+        <h3>Создать задачу</h3>
+        <label>Заголовок<br><input type="text" id="task-title" placeholder="Заголовок задачи"></label>
+        <label>Описание<br><textarea id="task-desc" rows="3" placeholder="Описание (опционально)"></textarea></label>
+        <button id="btn-create-task">Создать задачу</button>
+      </div>
+
+      <div id="tasks-list" class="tasks-list">
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Управление пользователями (manager/admin)</h2>
+      <div class="users-controls">
+        <button id="btn-load-users">Загрузить пользователей</button>
+        <span class="hint">Доступно только при наличии прав `users:read`</span>
+      </div>
+      <div id="users-list" class="users-list"></div>
+
+      <div class="admin-actions">
+        <div>
+          <h3>Сменить роль пользователя (admin)</h3>
+          <label>ID пользователя<br><input type="text" id="role-user-id"></label>
+          <label>Новая роль<br>
+            <select id="role-new-role">
+              <option value="user">user</option>
+              <option value="manager">manager</option>
+              <option value="admin">admin</option>
+            </select>
+          </label>
+          <button id="btn-change-role">Обновить роль</button>
+        </div>
+        <div>
+          <h3>Деактивировать аккаунт (admin)</h3>
+          <label>ID пользователя<br><input type="text" id="deact-user-id"></label>
+          <button id="btn-deactivate-user">Деактивировать</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="messages" class="messages">
+      <div id="msg-error" class="message error hidden"></div>
+      <div id="msg-success" class="message success hidden"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

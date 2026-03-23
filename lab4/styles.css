@@ -1,0 +1,366 @@
+css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+body {
+    background: #4f0c84;
+    line-height: 1.5;
+}
+
+.container {
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    background-color: white;
+    color: #4f0c84;
+    user-select: text;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #4f0c84;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0px 15px;
+}
+
+.subtitle {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 8px solid #4f0c84;
+    border-radius: 0px 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+    color: #4f0c84;
+    text-align: center;
+    border-bottom: 2px solid #4f0c84;
+    padding-bottom: 0.5rem;
+}
+
+h3 {
+    color: #4f0c84;
+    margin: 1.5rem 0 1rem 0;
+    font-weight: 600;
+}
+
+.auth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.auth-grid > div {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+label {
+    display: block;
+    margin: 1rem 0 0.5rem;
+    font-weight: 600;
+    color: #4f0c84;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+textarea,
+select {
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 100%;  
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+    color: #333;
+    box-sizing: border-box
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #4f0c84;
+    box-shadow: 0 0 8px rgba(79, 12, 132, 0.3);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+button {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: 2px solid #4f0c84;
+    background: white;
+    color: #4f0c84;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 0.5rem 0.5rem 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #4f0c84;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 12, 132, 0.3);
+}
+
+button.secondary {
+    background: #f8f9fa;
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+button.secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.pre-block {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 1rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    max-height: 250px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+}
+
+.tasks-header,
+.users-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.hint {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.task-form {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.tasks-list {
+    width: 100%;
+}
+
+.task-item {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 1.2rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    border-left: 4px solid #4f0c84;
+}
+
+.task-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.task-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #4f0c84;
+}
+
+.task-meta {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0.5rem 0;
+}
+
+.task-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.task-actions button {
+    margin: 0;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.badge.status-open { 
+    background: #d4edda; 
+    color: #155724; 
+    border-color: #c3e6cb; 
+}
+
+.badge.status-in_progress { 
+    background: #fff3cd; 
+    color: #856404; 
+    border-color: #ffeaa7; 
+}
+
+.badge.status-done { 
+    background: #d1ecf1; 
+    color: #0c5460; 
+    border-color: #bee5eb; 
+}
+
+.badge.status-cancelled { 
+    background: #f8d7da; 
+    color: #721c24; 
+    border-color: #f5c6cb; 
+}
+
+.users-list {
+    margin-top: 1rem;
+}
+
+.user-row {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 1rem;
+    margin: 0.8rem 0;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-email {
+    font-weight: 700;
+    color: #4f0c84;
+}
+
+.user-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.admin-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.admin-actions > div {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.messages {
+    margin-top: 2rem;
+}
+
+.message {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    border: 2px solid;
+}
+
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.message.success {
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.3rem;
+        padding: 0.8rem 1rem;
+    }
+    
+    .auth-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .admin-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .task-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    button {
+        width: 100%;
+        margin: 0.3rem 0;
+    }
+    
+    .task-actions {
+        flex-direction: column;
+    }
+}
