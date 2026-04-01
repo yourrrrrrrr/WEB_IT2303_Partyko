@@ -1,0 +1,218 @@
+body {
+    font-family: 'Courier New', monospace;
+    background: white;
+    color: black;
+    margin: 0;
+    padding: 30px;
+    line-height: 1.5;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 30px 0;
+    padding-bottom: 15px;
+    border-bottom: 3px solid black;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 30px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid black;
+}
+
+h3 {
+    margin: 25px 0 15px 0;
+    font-weight: bold;
+}
+
+.subtitle {
+    margin: 0;
+    color: #444;
+    font-size: 14px;
+}
+
+.card {
+    border: 2px solid black;
+    padding: 20px;
+    margin: 20px 0;
+    background: #fafafa;
+    border-left: 8px solid black;
+}
+
+.auth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 6px;
+    font-weight: bold;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+textarea,
+select {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    padding: 10px;
+    border: 2px solid black;
+    width: 100%;
+    max-width: 320px;
+    box-sizing: border-box;
+    background: white;
+    color: black;
+    margin-top: 4px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+button {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    background: white;
+    color: black;
+    border: 2px solid black;
+    cursor: pointer;
+    margin: 10px 10px 10px 0;
+}
+
+button:hover {
+    background: black;
+    color: white;
+}
+
+button.secondary {
+    background: #f0f0f0;
+}
+
+button.secondary:hover {
+    background: #e0e0e0;
+    color: black;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pre-block {
+    border: 2px solid black;
+    padding: 16px;
+    background: #f0f0f0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 13px;
+    max-height: 220px;
+    overflow: auto;
+}
+
+.section-actions {
+    margin-bottom: 16px;
+}
+
+.hint {
+    font-size: 14px;
+    color: #444;
+    margin-left: 10px;
+}
+.hint.small { font-size: 12px; display: block; margin: 6px 0 0 0; }
+
+.article-form {
+    border: 2px dashed black;
+    padding: 16px;
+    margin: 16px 0;
+    background: #fafafa;
+}
+
+.articles-list {
+    margin-top: 16px;
+}
+
+.article-actions { margin-top: 10px; }
+.btn-publish { margin-right: 8px; }
+.user-item { margin: 10px 0; padding: 10px; border: 1px solid #ccc; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.user-role-select { width: auto; max-width: 120px; }
+.users-list { margin-top: 16px; }
+
+.article-item {
+    border: 2px solid black;
+    padding: 14px;
+    margin: 10px 0;
+    background: #fafafa;
+}
+
+.article-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.article-meta {
+    font-size: 13px;
+    color: #444;
+    margin: 6px 0;
+}
+
+.article-body {
+    font-size: 14px;
+    margin-top: 8px;
+    white-space: pre-wrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid black;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge.status-draft { background: #fff9c4; }
+.badge.status-published { background: #e8f5e9; }
+
+.messages {
+    margin-top: 20px;
+}
+
+.message {
+    padding: 14px 16px;
+    border: 2px solid black;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.message.error {
+    background: #ffebee;
+    border-color: #c62828;
+    color: #b71c1c;
+}
+
+.message.success {
+    background: #e8f5e9;
+    border-color: #2e7d32;
+    color: #1b5e20;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    body { padding: 20px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; }
+    button { margin: 8px 8px 8px 0; }
+    .auth-grid { grid-template-columns: 1fr; }
+    input, textarea, select { max-width: none; }
+}

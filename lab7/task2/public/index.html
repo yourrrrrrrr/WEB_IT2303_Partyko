@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab7 Task2 — Game Platform Redis</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Лабораторная 7 — Задание 2</h1>
+
+    <section class="card">
+      <h2>Модуль 1 — Лидерборд (Redis Sorted Sets)</h2>
+      <label>User ID<br><input id="userId" value="u-100"></label>
+      <label>Username<br><input id="username" value="player100"></label>
+
+      <label>Score (POST /api/scores)<br><input id="setScore" value="120"></label>
+      <label>Delta (POST /api/scores/increment)<br><input id="delta" value="10"></label>
+
+      <div class="row">
+        <button id="btn-post-scores">POST /api/scores</button>
+        <button id="btn-post-increment">POST /api/scores/increment</button>
+      </div>
+
+      <h3 style="margin-top:14px;">GET /api/leaderboard (параметры)</h3>
+      <label>top<br><input id="top" value="10"></label>
+      <label>page<br><input id="page" value="1"></label>
+      <label>limit<br><input id="limit" value="10"></label>
+
+      <div class="row">
+        <button id="btn-get-leaderboard">GET /api/leaderboard</button>
+        <button id="btn-get-player">GET /api/leaderboard/player/:userId</button>
+        <button id="btn-delete-player">DELETE /api/leaderboard/player/:userId</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Модуль 1 (доп.) — Еженедельный лидерборд</h2>
+      <div class="row">
+        <button id="btn-weekly">GET /api/leaderboard/weekly</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Модуль 2 — Очередь задач (Redis List + Worker)</h2>
+      <label>User ID<br><input id="queueUserId" value="u-100"></label>
+      <label>Achievement<br><input id="achievement" value="first_blood"></label>
+      <label>Metadata (JSON) для job<br><input id="metadata" value='{"from":"ui"}'></label>
+      <div class="row">
+        <button id="btn-enqueue">POST /api/achievements/enqueue</button>
+        <button id="btn-queue-stats">GET /api/achievements/stats</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Модуль 3 — Распределённая блокировка (Redlock, упрощённый)</h2>
+      <pre class="pre-block" style="margin-top:0;">
+Проверка делается параллельными запросами к:
+- POST /api/scores
+- POST /api/scores/increment</pre>
+    </section>
+
+    <section class="card">
+      <h2>Модуль 4 — Redis Streams (аудит событий)</h2>
+      <label>userId (опционально)<br><input id="events-user" placeholder="например u-100"></label>
+      <label>event (опционально)<br><input id="events-type" placeholder="score_updated"></label>
+      <label>from (ID, для пагинации) <br><input id="events-from" placeholder="пример: - или 1680000000000-0"
+          value="-"></label>
+      <label>limit<br><input id="events-limit" value="20"></label>
+      <div class="row">
+        <button id="btn-events">GET /api/events</button>
+        <button id="btn-summary">GET /api/stats/summary</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Модуль 5 — Транзакции (MULTI/EXEC)</h2>
+      <label>User ID<br><input id="tx-userId" value="u-tx-1"></label>
+      <label>Username<br><input id="tx-username" value="tx-player"></label>
+      <label>initialScore<br><input id="tx-initialScore" value="50"></label>
+      <label style="margin-top:10px;">
+        <input type="checkbox" id="tx-forceError">
+        <span>С намеренной ошибкой (демо rollback через DISCARD)</span>
+      </label>
+      <div class="row">
+        <button id="btn-tx-register">POST /api/players/register</button>
+      </div>
+      <pre id="tx-out-hint" class="pre-block">
+Для критерия 7 включи чекбокс и отправь запрос: транзакция будет отменена до `EXEC`.
+      </pre>
+    </section>
+
+    <pre id="out" class="pre-block">Ответы API будут здесь.</pre>
+  </div>
+  <script src="app.js"></script>
+</body>
+
+</html>

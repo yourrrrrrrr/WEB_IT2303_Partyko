@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab6 — Задание 2 (OWASP Fix)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Платформа статей — Lab6 / Task2 (исправлено)</h1>
+      <p class="subtitle">Backend: <code>http://localhost:3010</code>.</p>
+    </header>
+
+    <section class="card">
+      <h2>1. Вход</h2>
+      <div class="auth-grid">
+        <div>
+          <h3>Логин</h3>
+          <label>Username<br><input id="login-user" type="text" placeholder="alice"></label>
+          <label>Password<br><input id="login-pass" type="password" placeholder="alice123"></label>
+          <button id="btn-login">Войти</button>
+          <button id="btn-logout" class="secondary">Выйти</button>
+          <p class="hint small">Dev seed: <code>admin/admin123</code>, <code>alice/alice123</code> (создаётся автоматически).</p>
+        </div>
+        <div>
+          <h3>Текущий пользователь</h3>
+          <button id="btn-me">Обновить</button>
+          <pre id="me-out" class="pre-block">Не авторизован</pre>
+        </div>
+        <div>
+          <h3>Файлы</h3>
+          <p class="hint">Разрешены изображения: jpg/jpeg/png/gif, до 5MB. Имя файла заменяется на UUID.</p>
+          <input id="upload-file" type="file" accept=".jpg,.jpeg,.png,.gif">
+          <button id="btn-upload">Загрузить</button>
+          <pre id="upload-out" class="pre-block hidden"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Статья</h2>
+      <div class="row">
+        <div>
+          <label>Article ID</label>
+          <input id="article-id" type="text" value="1">
+          <button id="btn-load-article">Загрузить статью</button>
+          <button id="btn-publish" class="secondary">Опубликовать (admin)</button>
+        </div>
+        <div>
+          <label>Результат</label>
+          <pre id="article-out" class="pre-block hidden"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Комментарии</h2>
+      <div class="row">
+        <div>
+          <label>Текст комментария (plain text)</label>
+          <textarea id="comment-body" rows="4" placeholder="Например: привет! <script>alert(1)</script>"></textarea>
+          <button id="btn-add-comment">Добавить комментарий</button>
+          <span class="hint small">На сервере вывод в HTML экранируется — тег <code>&lt;script&gt;</code> не выполнится.</span>
+        </div>
+        <div>
+          <label>HTML выдача (без XSS)</label>
+          <div id="comments-html" class="comments-box"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4. Preview (SSRF-protected)</h2>
+      <p class="hint">Только <code>https://</code> и только домены из allowlist (см. <code>PREVIEW_ALLOWLIST</code>).</p>
+      <label>URL</label>
+      <input id="preview-url" type="text" placeholder="https://example.com/">
+      <button id="btn-preview">Получить превью</button>
+      <pre id="preview-out" class="pre-block hidden"></pre>
+    </section>
+
+    <section id="messages" class="messages">
+      <div id="msg-error" class="message error hidden"></div>
+      <div id="msg-success" class="message success hidden"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

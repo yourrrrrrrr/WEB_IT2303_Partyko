@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab6 — Задание 1 (Отзывы)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Отзывы о товарах</h1>
+      <p class="subtitle">Backend: <code>http://localhost:3006</code>.</p>
+    </header>
+
+    <section class="card">
+      <h2>1. Вход</h2>
+      <div class="auth-grid">
+        <div>
+          <h3>Dev-аккаунты</h3>
+          <p class="hint">Кнопка создаёт пользователей (только в dev): <code>admin/admin123</code>, <code>alice/user123</code>.</p>
+          <button id="btn-seed" class="secondary">Создать dev-пользователей</button>
+          <pre id="seed-out" class="pre-block hidden"></pre>
+        </div>
+        <div>
+          <h3>Логин</h3>
+          <label>Username<br><input id="login-user" type="text" placeholder="alice"></label>
+          <label>Password<br><input id="login-pass" type="password" placeholder="user123"></label>
+          <button id="btn-login">Войти</button>
+          <button id="btn-logout" class="secondary">Выйти</button>
+        </div>
+        <div>
+          <h3>Текущий пользователь</h3>
+          <button id="btn-me">Обновить</button>
+          <pre id="me-out" class="pre-block">Не авторизован</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Товары</h2>
+      <div class="section-actions">
+        <button id="btn-load-products">Загрузить товары</button>
+        <span class="hint">Первый запрос ставит cookie <code>csrf-token</code>.</span>
+      </div>
+      <div class="row">
+        <div>
+          <label>Выбранный товар</label>
+          <select id="product-select"></select>
+          <button id="btn-load-reviews" class="secondary">Загрузить отзывы</button>
+        </div>
+        <div>
+          <label>CSRF (из cookie)</label>
+          <input id="csrf-view" type="text" readonly>
+          <span class="hint small">Для POST/DELETE отправляется в заголовке <code>X-CSRF-Token</code>.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Оставить отзыв (нужен вход)</h2>
+      <p class="hint">Разрешены теги: <code>&lt;b&gt; &lt;i&gt; &lt;em&gt; &lt;strong&gt; &lt;a href&gt;</code>. Запрещены <code>javascript:</code> и <code>data:</code>.</p>
+      <label>Текст отзыва (HTML)</label>
+      <textarea id="review-body" rows="5" placeholder="Например: Отлично! <b>рекомендую</b>. <a href=&quot;https://example.com&quot;>ссылка</a>"></textarea>
+      <button id="btn-create-review">Отправить отзыв</button>
+      <pre id="create-out" class="pre-block hidden"></pre>
+    </section>
+
+    <section class="card">
+      <h2>4. Отзывы</h2>
+      <div id="reviews-list"></div>
+    </section>
+
+    <section id="messages" class="messages">
+      <div id="msg-error" class="message error hidden"></div>
+      <div id="msg-success" class="message success hidden"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

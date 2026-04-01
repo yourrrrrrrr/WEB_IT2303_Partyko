@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторная 5 — Платформа статей (JWT + RBAC)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Платформа статей — Lab 5</h1>
+      <p class="subtitle">Один сервер: http://localhost:3000</p>
+    </header>
+
+    <section class="card">
+      <h2>1. Аутентификация</h2>
+      <div class="auth-grid">
+        <div>
+          <h3>Регистрация</h3>
+          <label>Email<br><input type="email" id="reg-email" placeholder="user@example.com"></label>
+          <label>Пароль<br><input type="password" id="reg-password" placeholder="минимум 8 символов"></label>
+          <button id="btn-register">Зарегистрироваться</button>
+        </div>
+        <div>
+          <h3>Вход</h3>
+          <label>Email<br><input type="email" id="login-email" placeholder="admin@example.com"></label>
+          <label>Пароль<br><input type="password" id="login-password" placeholder="admin123"></label>
+          <button id="btn-login">Войти</button>
+          <a href="/auth/oauth/github" class="btn-link">Войти через GitHub (mock OAuth)</a>
+          <button id="btn-logout" class="secondary">Выйти</button>
+        </div>
+        <div>
+          <h3>Текущий пользователь</h3>
+          <button id="btn-me">Обновить профиль</button>
+          <pre id="me-info" class="pre-block">Не авторизован</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin-section" class="card" style="display:none;">
+      <h2>2. Админ — Пользователи</h2>
+      <p class="hint">Смена роли и деактивация (только admin).</p>
+      <button id="btn-load-users">Обновить список</button>
+      <div id="users-list" class="users-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. Статьи</h2>
+      <div class="section-actions">
+        <button id="btn-load-articles">Загрузить статьи</button>
+        <span class="hint">Без входа — только опубликованные; author+ — свои черновики; editor+ — кнопка «Опубликовать» для чужих черновиков</span>
+      </div>
+      <div class="article-form">
+        <h3>Создать статью (author+)</h3>
+        <label>Заголовок<br><input type="text" id="article-title" placeholder="Заголовок"></label>
+        <label>Текст<br><textarea id="article-body" rows="4" placeholder="Текст статьи"></textarea></label>
+        <button id="btn-create-article">Создать статью</button>
+      </div>
+      <div id="articles-list" class="articles-list"></div>
+    </section>
+
+    <section id="messages" class="messages">
+      <div id="msg-error" class="message error hidden"></div>
+      <div id="msg-success" class="message success hidden"></div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

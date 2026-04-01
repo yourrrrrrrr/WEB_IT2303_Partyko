@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab7 Task1 — Rate Limit + SSE + Sessions</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Лабораторная 7 — Задание 1</h1>
+
+    <section class="card">
+      <h2>1. Rate Limiter</h2>
+      <div class="row">
+        <button id="btn-login-rl">POST /api/login</button>
+        <button id="btn-register-rl">POST /api/register</button>
+        <button id="btn-search-rl">GET /api/search?q=redis</button>
+      </div>
+      <pre id="rate-out" class="pre-block">Запустите запросы, чтобы увидеть лимиты и заголовки.</pre>
+    </section>
+
+    <section class="card">
+      <h2>2. Уведомления SSE + Pub/Sub</h2>
+      <label>User ID для потока<br><input id="sse-user-id" value="u-1"></label>
+      <div class="row">
+        <button id="btn-connect-sse">Подключить поток</button>
+        <button id="btn-disconnect-sse" class="secondary">Отключить поток</button>
+      </div>
+      <label>Сообщение<br><input id="notif-message" value="Ваш заказ готов"></label>
+      <label>Тип<br><input id="notif-type" value="info"></label>
+      <label>User ID (пусто = global)<br><input id="notif-user-id" placeholder="например u-1"></label>
+      <div class="row">
+        <button id="btn-send">POST /api/notifications/send</button>
+        <button id="btn-broadcast">POST /api/notifications/broadcast</button>
+      </div>
+      <pre id="sse-out" class="pre-block">SSE события появятся здесь.</pre>
+    </section>
+
+    <section class="card">
+      <h2>3. Сессии в Redis Hash</h2>
+      <label>Email<br><input id="email" value="user@example.com"></label>
+      <label>Пароль<br><input id="password" type="password" value="user12345"></label>
+      <div class="row">
+        <button id="btn-auth-login">POST /api/auth/login</button>
+        <button id="btn-auth-me">GET /api/auth/me</button>
+        <button id="btn-auth-sessions">GET /api/auth/sessions</button>
+        <button id="btn-auth-logout" class="secondary">POST /api/auth/logout</button>
+      </div>
+      <pre id="auth-out" class="pre-block">Сессионные ответы отображаются здесь.</pre>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
