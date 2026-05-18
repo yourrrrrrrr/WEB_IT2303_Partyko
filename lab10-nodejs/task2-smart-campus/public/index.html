@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Задание 2 — IoT кампус</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+
+    body {
+      background: #4f0c84;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 8px solid #4f0c84;
+      border-radius: 0px 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      background-color: white;
+      color: #4f0c84;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #4f0c84;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0px 15px;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.3rem;
+      color: #4f0c84;
+      text-align: center;
+      border-bottom: 2px solid #4f0c84;
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 8px solid #4f0c84;
+      border-radius: 0px 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: 600;
+      color: #4f0c84;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #4f0c84;
+      box-shadow: 0 0 8px rgba(79, 12, 132, 0.3);
+    }
+
+    button {
+      width: 100%;
+      border: 2px solid #4f0c84;
+      background: white;
+      color: #4f0c84;
+      padding: 12px 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-top: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #4f0c84;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 12, 132, 0.3);
+    }
+
+    pre {
+      border: 1px solid #dee2e6;
+      background: #f8f9fa;
+      color: #333;
+      padding: 1rem;
+      margin-top: 12px;
+      max-height: 360px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .pill {
+      display: inline-block;
+      background: #f8f9fa;
+      color: #4f0c84;
+      border: 1px solid #4f0c84;
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin: 4px 6px 0 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        padding: 0.8rem 1rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>IoT-платформа умного кампуса</h1>
+    </header>
+    <div class="grid">
+      <section class="card">
+        <h2>1. Датчик</h2>
+        <label>API key</label><input id="key" value="sensor-demo-key">
+        <label>Sensor ID</label><input id="sensor" value="s-temp-1">
+        <label>Room ID</label><input id="room" value="A101">
+        <label>Metrics через запятую</label><input id="metrics" value="temperature,co2,motion">
+        <button onclick="registerDevice()">Зарегистрировать датчик</button>
+      </section>
+      <section class="card">
+        <h2>2. Телеметрия</h2>
+        <label>Метрика</label><select id="metric">
+          <option>temperature</option>
+          <option>co2</option>
+          <option>motion</option>
+          <option>humidity</option>
+        </select>
+        <label>Значение</label><input id="value" type="number" value="31">
+        <button onclick="sendTelemetry()">Отправить событие</button>
+        <button onclick="sendBatch()">Отправить batch-сценарий</button>
+      </section>
+      <section class="card">
+        <h2>3. Просмотр</h2>
+        <button onclick="loadRoom()">События комнаты</button>
+        <button onclick="loadAlerts()">Алерты</button>
+        <button onclick="health()">System health</button>
+        <button onclick="openDashboard()">Открыть dashboard</button>
+      </section>
+      <section class="card">
+        <h2>4. Внешний источник</h2>
+        <p>Имитирует нормализацию данных ThingSpeak.</p>
+        <button onclick="externalFeed()">Отправить external feed</button>
+        <button onclick="disableDevice()">Отключить датчик</button>
+      </section>
+    </div>
+    <section class="card">
+      <h2>Результат</h2>
+      <pre id="out">Сначала зарегистрируйте датчик, затем отправьте телеметрию.</pre>
+    </section>
+  </div>
+  <script>
+    const out = document.getElementById('out');
+    function show(data) { out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2) }
+    function apiHeaders() { return { 'Content-Type': 'application/json', 'X-API-Key': key.value, 'X-Sensor-ID': sensor.value } }
+    async function request(path, opts = {}) { const res = await fetch(path, { ...opts, headers: { ...apiHeaders(), ...(opts.headers || {}) } }); const txt = await res.text(); let data; try { data = JSON.parse(txt) } catch { data = txt } if (!res.ok) throw data; return data; }
+    async function registerDevice() { try { show(await request('/api/devices/register', { method: 'POST', body: JSON.stringify({ sensor_id: sensor.value, room_id: room.value, metrics: metrics.value.split(',').map(x => x.trim()).filter(Boolean) }) })) } catch (e) { show(e) } }
+    async function sendTelemetry() { try { show(await request('/telemetry', { method: 'POST', body: JSON.stringify({ sensor_id: sensor.value, room_id: room.value, metric: metric.value, value: Number(value.value) }) })) } catch (e) { show(e) } }
+    async function sendBatch() { try { const events = [{ sensor_id: sensor.value, room_id: room.value, metric: 'temperature', value: 22 }, { sensor_id: sensor.value, room_id: room.value, metric: 'temperature', value: 31 }, { sensor_id: sensor.value, room_id: room.value, metric: 'co2', value: 1200 }, { sensor_id: sensor.value, room_id: room.value, metric: 'motion', value: 1 }]; show(await request('/telemetry/batch', { method: 'POST', body: JSON.stringify({ events }) })) } catch (e) { show(e) } }
+    async function loadRoom() { try { show(await request('/telemetry/room/' + room.value, { method: 'GET' })) } catch (e) { show(e) } }
+    async function loadAlerts() { try { show(await request('/api/alerts', { method: 'GET' })) } catch (e) { show(e) } }
+    async function health() { try { show(await request('/system/health', { method: 'GET' })) } catch (e) { show(e) } }
+    async function externalFeed() { try { show(await request('/telemetry/external', { method: 'POST', body: JSON.stringify({ feed: { field1: 29, field2: 63, created_at: new Date().toISOString() } }) })) } catch (e) { show(e) } }
+    async function disableDevice() { try { show(await request('/api/devices/' + sensor.value + '/disable', { method: 'PUT' })) } catch (e) { show(e) } }
+    function openDashboard() { window.open('/dashboard/campus', '_blank') }
+  </script>
+</body>
+
+</html>

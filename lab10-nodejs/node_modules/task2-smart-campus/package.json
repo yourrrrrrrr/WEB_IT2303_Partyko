@@ -1,0 +1,1 @@
+{"name":"task2-smart-campus","version":"1.0.0","type":"module","scripts":{"dev":"node src/index.js","test":"node src/test.js"},"dependencies":{"express":"^4.19.2","morgan":"^1.10.0","uuid":"^9.0.1"},"devDependencies":{}}

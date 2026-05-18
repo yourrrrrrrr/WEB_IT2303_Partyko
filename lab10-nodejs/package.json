@@ -1,0 +1,1 @@
+{"name":"lab10-nodejs-microservices","private":true,"workspaces":["task1-learning-platform","task2-smart-campus"],"scripts":{"task1":"npm --workspace task1-learning-platform run dev","task2":"npm --workspace task2-smart-campus run dev"},"dependencies":{}}

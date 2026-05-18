@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Задание 1 — Онлайн-обучение</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+
+    body {
+      background: #4f0c84;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 8px solid #4f0c84;
+      border-radius: 0px 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      background-color: white;
+      color: #4f0c84;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #4f0c84;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0px 15px;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.3rem;
+      color: #4f0c84;
+      text-align: center;
+      border-bottom: 2px solid #4f0c84;
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 8px solid #4f0c84;
+      border-radius: 0px 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: 600;
+      color: #4f0c84;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #4f0c84;
+      box-shadow: 0 0 8px rgba(79, 12, 132, 0.3);
+    }
+
+    button {
+      width: 100%;
+      border: 2px solid #4f0c84;
+      background: white;
+      color: #4f0c84;
+      padding: 12px 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-top: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #4f0c84;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 12, 132, 0.3);
+    }
+
+    pre {
+      border: 1px solid #dee2e6;
+      background: #f8f9fa;
+      color: #333;
+      padding: 1rem;
+      margin-top: 12px;
+      max-height: 360px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .pill {
+      display: inline-block;
+      background: #f8f9fa;
+      color: #4f0c84;
+      border: 1px solid #4f0c84;
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin: 4px 6px 0 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        padding: 0.8rem 1rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Платформа онлайн-обучения</h1>
+      <p>HTML-фронтенд для проверки микросервисов: каталог курсов, запись, прогресс, события learning-events и
+        рекомендации.</p>
+      <span class="pill">API Gateway: localhost:3100</span><span class="pill">JWT-like: Bearer demo</span><span
+        class="pill">Rate limit: 50 req/min/student</span>
+    </header>
+    <div class="grid">
+      <section class="card">
+        <h2>1. Студент</h2>
+        <label>ID студента</label><input id="student" value="s1">
+        <label>JWT token</label><input id="token" value="demo">
+        <button onclick="loadCourses()">Загрузить курсы</button>
+      </section>
+      <section class="card">
+        <h2>2. Курс</h2>
+        <label>Курс</label><select id="course"></select>
+        <button onclick="loadLessons()">Показать уроки</button>
+        <button onclick="enroll()">Записаться на курс</button>
+      </section>
+      <section class="card">
+        <h2>3. Прогресс</h2>
+        <label>Урок</label><select id="lesson"></select>
+        <label>Время просмотра, сек.</label><input id="watchTime" type="number" value="120">
+        <button onclick="watchLesson()">Отметить просмотр</button>
+      </section>
+      <section class="card">
+        <h2>4. Рекомендации</h2>
+        <button onclick="loadRecommendations()">Получить рекомендации</button>
+        <button onclick="markInactive()">Событие student.inactive</button>
+        <button onclick="loadPopular()">Most popular courses</button>
+        <button onclick="openDashboard()">Открыть dashboard</button>
+      </section>
+    </div>
+    <section class="card">
+      <h2>Результат</h2>
+      <pre id="out">Нажмите «Загрузить курсы».</pre>
+    </section>
+  </div>
+  <script>
+    const out = document.getElementById('out');
+    function headers() { return { 'Authorization': 'Bearer ' + document.getElementById('token').value, 'X-Student-ID': document.getElementById('student').value, 'Content-Type': 'application/json' }; }
+    function show(data) { out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2) }
+    async function api(path, opts = {}) { const res = await fetch(path, { ...opts, headers: { ...headers(), ...(opts.headers || {}) } }); const txt = await res.text(); let data; try { data = JSON.parse(txt) } catch { data = txt } if (!res.ok) throw data; return data; }
+    async function loadCourses() { try { const data = await api('/api/courses'); const sel = document.getElementById('course'); sel.innerHTML = data.map(c => `<option value="${c.course_id}">${c.title} (${c.difficulty})</option>`).join(''); show(data); await loadLessons(); } catch (e) { show(e) } }
+    async function loadLessons() { try { const id = document.getElementById('course').value; const data = await api('/api/courses/' + id + '/lessons'); document.getElementById('lesson').innerHTML = data.lessons.map(l => `<option>${l}</option>`).join(''); show(data); } catch (e) { show(e) } }
+    async function enroll() { try { const id = document.getElementById('course').value; show(await api('/api/courses/' + id + '/enroll', { method: 'POST', body: JSON.stringify({ student_id: student.value }) })); } catch (e) { show(e) } }
+    async function watchLesson() { try { show(await api('/api/progress/watch', { method: 'POST', body: JSON.stringify({ student_id: student.value, course_id: course.value, lesson_id: lesson.value, watch_time: Number(watchTime.value) }) })); } catch (e) { show(e) } }
+    async function loadRecommendations() { try { show(await api('/api/recommendations/' + student.value)); } catch (e) { show(e) } }
+    async function markInactive() { try { show(await api('/api/students/' + student.value + '/inactive', { method: 'POST' })); await loadRecommendations(); } catch (e) { show(e) } }
+    async function loadPopular() { try { show(await api('/api/recommendations/popular/courses')); } catch (e) { show(e) } }
+    function openDashboard() { window.open('/dashboard/student/' + student.value, '_blank') }
+    loadCourses();
+  </script>
+</body>
+
+</html>
