@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Campus Dashboard</title>
+  <style>
+    :root {
+      --bg: #12081f;
+      --card: #2a1a42;
+      --accent: #c084fc;
+      --accent-dim: #7c3aed;
+      --warn: #e9d5ff;
+      --danger: #f0abfc;
+      --text: #ede9fe;
+      --muted: #a78bfa;
+      --border: #4c3575;
+      --input-bg: #1a0f2e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(160deg, #12081f 0%, #1e1035 50%, #0f0618 100%);
+      color: var(--text);
+      margin: 0;
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+    h1 { color: var(--accent); margin: 0 0 0.5rem; }
+    h2, h3 { margin: 0 0 0.75rem; font-size: 1rem; color: #ddd6fe; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.12);
+    }
+    .alert {
+      border-left: 4px solid var(--accent-dim);
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      background: #231633;
+      font-size: 0.9rem;
+    }
+    .alert.danger { border-color: var(--danger); background: #2d1a3d; }
+    .heat {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin: 2px;
+      border-radius: 4px;
+      background: #5b21b6;
+      font-size: 0.85rem;
+      color: #ede9fe;
+    }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; }
+    input, select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    input:focus, select:focus { outline: 2px solid var(--accent-dim); border-color: var(--accent); }
+    .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; align-items: end; }
+    button {
+      background: linear-gradient(135deg, var(--accent-dim), var(--accent));
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #1a0a2e;
+    }
+    button:hover { filter: brightness(1.12); }
+    button.secondary { background: #4c3575; color: var(--text); }
+    button.warn { background: #9333ea; color: #faf5ff; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    .presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .presets button { font-size: 0.8rem; padding: 0.35rem 0.65rem; }
+    #jsonOut {
+      background: #1a0f2e;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0;
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #ddd6fe;
+    }
+    .json-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; }
+    p.hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Smart Campus IoT</h1>
+  <p class="hint">Данные комнат и alerts хранятся в памяти alert-engine (не в браузере) — после перезагрузки страницы они снова приходят с сервера. Авто-collector по умолчанию выключен. Порог alert: температура &gt; 28°C, повтор того же alert — не чаще 5 мин.</p>
+
+  <div class="card">
+    <h2>Отправить показание</h2>
+    <div class="row">
+      <div>
+        <label>Помещение (room_id)</label>
+        <input id="roomId" value="room-101" placeholder="room-101" />
+      </div>
+      <div>
+        <label>Температура °C</label>
+        <input id="temperature" type="number" step="0.1" value="22" />
+      </div>
+      <div>
+        <label>Метрика</label>
+        <select id="metric">
+          <option value="temperature">temperature</option>
+          <option value="humidity">humidity</option>
+          <option value="co2">co2</option>
+          <option value="motion">motion</option>
+          <option value="light">light</option>
+        </select>
+      </div>
+      <div>
+        <label>Значение</label>
+        <input id="metricValue" type="number" step="0.1" placeholder="авто из температуры" />
+      </div>
+      <div>
+        <label>Sensor ID</label>
+        <input id="sensorId" value="S-TEMP-101" />
+      </div>
+      <div>
+        <label>API key</label>
+        <input id="apiKey" value="sensor-key-demo-1" />
+      </div>
+    </div>
+    <div class="presets">
+      <button type="button" class="secondary" onclick="applyPreset(22)">Норма 22°C</button>
+      <button type="button" class="warn" onclick="applyPreset(31)">Жара 31°C (alert)</button>
+      <button type="button" class="secondary" onclick="applyPreset(1200, 'co2')">CO₂ 1200</button>
+      <button type="button" class="secondary" onclick="applyPreset(1, 'motion')">Движение</button>
+    </div>
+    <div class="toolbar">
+      <button type="button" onclick="sendTelemetry()">Отправить</button>
+      <button type="button" class="secondary" onclick="refreshCampus()">Обновить карточки</button>
+      <button type="button" class="secondary" onclick="loadCampusJson()">JSON дашборда</button>
+      <button type="button" class="secondary" onclick="loadSystemHealth()">System health</button>
+      <button type="button" class="secondary" onclick="resetCampusDemo()">Очистить alerts и комнаты</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="grid">
+        <div class="card"><h3>Температура по аудиториям</h3><div id="temps">—</div></div>
+        <div class="card"><h3>Последние alerts</h3><div id="alerts">—</div></div>
+        <div class="card"><h3>Heatmap занятости</h3><div id="heat">—</div></div>
+        <div class="card"><h3>Offline sensors</h3><div id="offline">нет данных</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom: 0;">
+        <h2>Ответ API (JSON)</h2>
+        <p class="json-meta" id="jsonMeta">—</p>
+        <pre id="jsonOut">{}</pre>
+        <button type="button" class="secondary" style="margin-top: 0.75rem;" onclick="clearJson()">Очистить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = window.location.origin;
+
+    function showJson(label, data, status) {
+      document.getElementById('jsonMeta').textContent =
+        label + (status != null ? ` · HTTP ${status}` : '') + ' · ' + new Date().toLocaleTimeString();
+      document.getElementById('jsonOut').textContent = JSON.stringify(data, null, 2);
+    }
+
+    function clearJson() {
+      document.getElementById('jsonMeta').textContent = '—';
+      document.getElementById('jsonOut').textContent = '{}';
+    }
+
+    function requestHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'x-api-key': document.getElementById('apiKey').value.trim(),
+        'x-sensor-id': document.getElementById('sensorId').value.trim(),
+        'X-Request-ID': crypto.randomUUID(),
+      };
+    }
+
+    function buildPayload() {
+      const metric = document.getElementById('metric').value;
+      const room_id = document.getElementById('roomId').value.trim();
+      const sensor_id = document.getElementById('sensorId').value.trim();
+      let value;
+      if (document.getElementById('metricValue').value !== '') {
+        value = Number(document.getElementById('metricValue').value);
+      } else if (metric === 'temperature') {
+        value = Number(document.getElementById('temperature').value);
+      } else {
+        value = Number(document.getElementById('temperature').value);
+      }
+      return {
+        sensor_id,
+        room_id,
+        metric,
+        value,
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    function applyPreset(val, metric) {
+      const m = metric || 'temperature';
+      document.getElementById('metric').value = m;
+      document.getElementById('metricValue').value = val;
+      if (m === 'temperature') document.getElementById('temperature').value = val;
+      if (m === 'co2') document.getElementById('sensorId').value = 'S-CO2-101';
+      if (m === 'motion') document.getElementById('sensorId').value = 'S-MOT-101';
+    }
+
+    document.getElementById('metric').addEventListener('change', () => {
+      const m = document.getElementById('metric').value;
+      if (m === 'temperature') {
+        document.getElementById('metricValue').placeholder = 'авто из температуры';
+      } else {
+        document.getElementById('metricValue').placeholder = 'число';
+      }
+    });
+
+    document.getElementById('temperature').addEventListener('input', () => {
+      if (document.getElementById('metric').value === 'temperature' && document.getElementById('metricValue').value === '') {
+        /* value taken from temperature field on send */
+      }
+    });
+
+    async function sendTelemetry() {
+      const body = buildPayload();
+      try {
+        const r = await fetch(`${API}/telemetry`, {
+          method: 'POST',
+          headers: requestHeaders(),
+          body: JSON.stringify(body),
+        });
+        const text = await r.text();
+        let data;
+        try { data = JSON.parse(text); } catch { data = { raw: text }; }
+        showJson('POST /telemetry', data, r.status);
+        if (r.ok) setTimeout(refreshCampus, 1500);
+      } catch (err) {
+        showJson('POST /telemetry — ошибка', { error: err.message });
+      }
+    }
+
+    async function loadSystemHealth() {
+      const r = await fetch(`${API}/system/health`);
+      const d = await r.json();
+      showJson('GET /system/health', d, r.status);
+    }
+
+    function renderCampusCards(d) {
+      document.getElementById('temps').innerHTML = (d.temperatures || [])
+        .map((t) => `<p>${t.room_id}: <strong>${Number(t.temperature).toFixed(1)}°C</strong></p>`)
+        .join('') || '<p>нет данных</p>';
+
+      document.getElementById('alerts').innerHTML = (d.alerts || [])
+        .map((a) => `<div class="alert ${a.type?.includes('overheat') ? 'danger' : ''}">${a.type} — ${a.room_id} (${a.value ?? ''})</div>`)
+        .join('') || '<p>нет alerts</p>';
+
+      document.getElementById('heat').innerHTML = (d.occupancy_heatmap || [])
+        .map((h) => `<span class="heat">${h.room_id}: ${h.activity_score}</span>`)
+        .join('') || '<p>—</p>';
+
+      document.getElementById('offline').textContent =
+        (d.offline_sensors || []).length ? d.offline_sensors.join(', ') : 'все online';
+    }
+
+    async function fetchCampusData() {
+      const r = await fetch(`${API}/dashboard/campus/data`);
+      const d = await r.json();
+      return { d, status: r.status };
+    }
+
+    async function refreshCampus() {
+      try {
+        const { d } = await fetchCampusData();
+        renderCampusCards(d);
+      } catch (err) {
+        document.getElementById('temps').innerHTML = `<p>Ошибка: ${err.message}</p>`;
+      }
+    }
+
+    async function loadCampusJson() {
+      const { d, status } = await fetchCampusData();
+      showJson('GET /dashboard/campus/data', d, status);
+    }
+
+    async function resetCampusDemo() {
+      const r = await fetch(`${API}/dashboard/campus/reset`, { method: 'POST' });
+      const d = await r.json();
+      showJson('POST /dashboard/campus/reset', d, r.status);
+      renderCampusCards({ temperatures: [], alerts: [], offline_sensors: [], occupancy_heatmap: [] });
+    }
+
+    document.getElementById('temps').innerHTML = '<p style="color:var(--muted)">Нажмите «Обновить карточки»</p>';
+    document.getElementById('alerts').innerHTML = '<p style="color:var(--muted)">—</p>';
+  </script>
+</body>
+</html>

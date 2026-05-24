@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learning Platform Dashboard</title>
+  <style>
+    :root {
+      --bg: #12081f;
+      --card: #2a1a42;
+      --accent: #c084fc;
+      --accent-dim: #7c3aed;
+      --text: #ede9fe;
+      --muted: #a78bfa;
+      --border: #4c3575;
+      --input-bg: #1a0f2e;
+      --success: #a78bfa;
+      --danger: #f0abfc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(160deg, #12081f 0%, #1e1035 50%, #0f0618 100%);
+      color: var(--text);
+      margin: 0;
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+    h1 { color: var(--accent); margin: 0 0 0.5rem; }
+    h2, h3 { margin: 0 0 0.75rem; font-size: 1rem; color: #ddd6fe; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.12);
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .bar { height: 8px; background: #3b2667; border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); transition: width 0.3s; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; }
+    input, select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    input:focus, select:focus { outline: 2px solid var(--accent-dim); border-color: var(--accent); }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.75rem; }
+    .row > * { flex: 1; min-width: 120px; }
+    .row .grow0 { flex: 0; min-width: auto; }
+    button {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-dim), var(--accent));
+      color: #1a0a2e;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    button:hover { filter: brightness(1.12); }
+    button.secondary { background: #4c3575; color: var(--text); }
+    button.lesson-btn { background: #3b2667; color: var(--text); font-weight: 500; }
+    button.lesson-btn.watched { background: #5b21b6; color: #ede9fe; }
+    button.lesson-btn.active { outline: 2px solid var(--accent); box-shadow: 0 0 12px rgba(192, 132, 252, 0.45); }
+    .lessons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    ul { padding-left: 1.2rem; margin: 0.25rem 0; }
+    .risk-high { color: var(--danger); }
+    .risk-low { color: var(--success); }
+    #jsonOut {
+      background: #1a0f2e;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0;
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #ddd6fe;
+    }
+    .json-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Платформа онлайн-обучения</h1>
+  <p style="color: var(--muted); margin-top: 0;">Выбор курса и урока, отметка просмотра, просмотр ответов API в JSON.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Student ID</label>
+        <input id="studentId" value="student-1" />
+      </div>
+      <div>
+        <label>Курс</label>
+        <select id="courseSelect"><option value="">Загрузка…</option></select>
+      </div>
+      <div>
+        <label>Время просмотра (сек)</label>
+        <input id="watchSeconds" type="number" value="180" min="1" />
+      </div>
+      <div class="grow0">
+        <label>&nbsp;</label>
+        <button type="button" onclick="initSession()">Войти / токен</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button type="button" onclick="loadDashboard(true)">Обновить дашборд</button>
+      <button type="button" class="secondary" onclick="refreshCards()">Обновить карточки</button>
+      <button type="button" class="secondary" onclick="loadDashboardJson()">JSON дашборда</button>
+      <button type="button" class="secondary" onclick="loadCourses()">Список курсов</button>
+      <button type="button" class="secondary" onclick="loadLessons()">Уроки курса</button>
+      <button type="button" class="secondary" onclick="loadProgress()">Прогресс</button>
+      <button type="button" class="secondary" onclick="loadRecommendations()">Рекомендации</button>
+      <button type="button" onclick="watchSelectedLesson()">Отметить выбранный урок</button>
+    </div>
+    <h3>Уроки</h3>
+    <p id="lessonHint" style="color: var(--muted); font-size: 0.85rem;">Выберите курс — появятся кнопки уроков.</p>
+    <div class="lessons" id="lessonButtons"></div>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="grid" id="content"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom: 0;">
+        <h2>Ответ API (JSON)</h2>
+        <p class="json-meta" id="jsonMeta">—</p>
+        <pre id="jsonOut">{}</pre>
+        <button type="button" class="secondary" style="margin-top: 0.75rem;" onclick="clearJson()">Очистить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = window.location.origin;
+    let token = '';
+    let courses = [];
+    let lessons = [];
+    let selectedLessonId = '';
+    let watchedIds = new Set();
+
+    function showJson(label, data, status) {
+      document.getElementById('jsonMeta').textContent =
+        label + (status != null ? ` · HTTP ${status}` : '') + ' · ' + new Date().toLocaleTimeString();
+      document.getElementById('jsonOut').textContent = JSON.stringify(data, null, 2);
+    }
+
+    function clearJson() {
+      document.getElementById('jsonMeta').textContent = '—';
+      document.getElementById('jsonOut').textContent = '{}';
+    }
+
+    function authHeaders() {
+      return {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'X-Request-ID': crypto.randomUUID(),
+      };
+    }
+
+    async function parseJsonResponse(r) {
+      const text = await r.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return {
+          error: 'Ответ не JSON (проверьте, что gateway запущен и пересобран)',
+          status: r.status,
+          body_preview: text.slice(0, 300),
+        };
+      }
+    }
+
+    async function getToken() {
+      const sid = document.getElementById('studentId').value.trim();
+      const r = await fetch(`${API}/auth/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id: sid }),
+      });
+      const d = await parseJsonResponse(r);
+      if (!r.ok || !d.token) {
+        showJson('POST /auth/token — ошибка', d, r.status);
+        throw new Error(d.error || 'Не удалось получить токен');
+      }
+      token = d.token;
+      showJson('POST /auth/token', d, r.status);
+      return sid;
+    }
+
+    async function initSession() {
+      await getToken();
+      await loadCourses();
+      await loadLessons();
+      await refreshCards();
+    }
+
+    function getCourseId() {
+      return document.getElementById('courseSelect').value || 'c1';
+    }
+
+    async function loadCourses() {
+      if (!token) await getToken();
+      const r = await fetch(`${API}/api/courses`, { headers: authHeaders() });
+      courses = await parseJsonResponse(r);
+      showJson('GET /api/courses', courses, r.status);
+      if (!r.ok || !Array.isArray(courses)) {
+        document.getElementById('courseSelect').innerHTML = '<option>ошибка загрузки</option>';
+        return courses;
+      }
+      const sel = document.getElementById('courseSelect');
+      sel.innerHTML = courses.map((c) =>
+        `<option value="${c.course_id}">${c.title} (${c.course_id}, ${c.lessons_count} уроков)</option>`
+      ).join('');
+      sel.onchange = () => { selectedLessonId = ''; loadLessons(); refreshCards(); };
+      return courses;
+    }
+
+    async function loadLessons() {
+      if (!token) await getToken();
+      const courseId = getCourseId();
+      const r = await fetch(`${API}/api/courses/${courseId}/lessons`, { headers: authHeaders() });
+      lessons = await parseJsonResponse(r);
+      if (!Array.isArray(lessons)) lessons = [];
+      showJson(`GET /api/courses/${courseId}/lessons`, lessons, r.status);
+      renderLessonButtons();
+      return lessons;
+    }
+
+    function renderLessonButtons() {
+      const box = document.getElementById('lessonButtons');
+      const hint = document.getElementById('lessonHint');
+      if (!lessons.length) {
+        box.innerHTML = '';
+        hint.textContent = 'Уроков нет — выберите другой курс.';
+        return;
+      }
+      hint.textContent = 'Нажмите урок, затем «Отметить выбранный урок» или кнопку урока сразу отметит просмотр.';
+      box.innerHTML = lessons.map((l) => {
+        const id = l.lesson_id;
+        const watched = watchedIds.has(id);
+        const active = selectedLessonId === id;
+        return `<button type="button" class="lesson-btn${watched ? ' watched' : ''}${active ? ' active' : ''}"
+          data-lesson="${id}" onclick="selectLesson('${id}')" ondblclick="watchLesson('${id}')">
+          ${l.title || id}
+        </button>`;
+      }).join('');
+    }
+
+    function selectLesson(lessonId) {
+      selectedLessonId = lessonId;
+      renderLessonButtons();
+    }
+
+    async function watchLesson(lessonId) {
+      if (!token) await getToken();
+      const courseId = getCourseId();
+      const lid = lessonId || selectedLessonId;
+      if (!lid) {
+        showJson('Ошибка', { error: 'Выберите урок' });
+        return;
+      }
+      const watch_seconds = Number(document.getElementById('watchSeconds').value) || 180;
+      const r = await fetch(`${API}/api/progress/watch`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ course_id: courseId, lesson_id: lid, watch_seconds }),
+      });
+      const d = await parseJsonResponse(r);
+      showJson('POST /api/progress/watch', d, r.status);
+      if (r.ok && d.watched_lesson_ids) {
+        watchedIds = new Set(d.watched_lesson_ids);
+      } else if (r.ok) {
+        watchedIds.add(lid);
+      }
+      selectedLessonId = lid;
+      renderLessonButtons();
+      setTimeout(refreshCards, 800);
+    }
+
+    function watchSelectedLesson() {
+      return watchLesson(selectedLessonId);
+    }
+
+    async function loadProgress() {
+      if (!token) await getToken();
+      const courseId = getCourseId();
+      const r = await fetch(`${API}/api/progress/${courseId}`, { headers: authHeaders() });
+      const d = await parseJsonResponse(r);
+      showJson(`GET /api/progress/${courseId}`, d, r.status);
+      if (d.watched_lesson_ids) watchedIds = new Set(d.watched_lesson_ids);
+      renderLessonButtons();
+      return d;
+    }
+
+    async function loadRecommendations() {
+      if (!token) await getToken();
+      const r = await fetch(`${API}/api/recommendations`, { headers: authHeaders() });
+      const d = await parseJsonResponse(r);
+      showJson('GET /api/recommendations', d, r.status);
+      return d;
+    }
+
+    function renderCards(d, progress, courseId) {
+      const course = courses.find((c) => c.course_id === courseId) || d.current_course;
+      const completion = progress.completion_percent ?? d.completion_percent ?? 0;
+      const risk = d.dropout_risk_score || 0;
+
+      document.getElementById('content').innerHTML = `
+        <div class="card">
+          <h3>Курс: ${course?.title || courseId}</h3>
+          <p>${course?.category || ''} · ${course?.difficulty || ''}</p>
+        </div>
+        <div class="card">
+          <h3>Прогресс (${courseId})</h3>
+          <p>${Number(completion).toFixed(1)}%</p>
+          <div class="bar"><div class="bar-fill" style="width:${Math.min(100, completion)}%"></div></div>
+          <p>Уроков просмотрено: ${progress.lessons_watched ?? (d.watched_lessons || []).length} / ${progress.total_lessons ?? '?'}</p>
+        </div>
+        <div class="card">
+          <h3>Рекомендации</h3>
+          <ul>${(d.recommendations || []).map((r) => `<li>${r.kind}: ${r.course_id} — ${r.reason}</li>`).join('') || '<li>нет</li>'}</ul>
+        </div>
+        <div class="card">
+          <h3>Dropout risk</h3>
+          <p class="${risk > 0.5 ? 'risk-high' : 'risk-low'}">${(risk * 100).toFixed(0)}%</p>
+          <p>Streak: ${d.stats?.streak_days ?? 0} дн.</p>
+        </div>
+      `;
+    }
+
+    async function fetchDashboardData() {
+      const sid = document.getElementById('studentId').value.trim();
+      if (!token) await getToken();
+      const courseId = getCourseId();
+      const r = await fetch(`${API}/dashboard/student/${sid}`, { headers: authHeaders() });
+      const d = await parseJsonResponse(r);
+      const progressR = await fetch(`${API}/api/progress/${courseId}`, { headers: authHeaders() });
+      const progress = await parseJsonResponse(progressR);
+      if (progress.watched_lesson_ids) watchedIds = new Set(progress.watched_lesson_ids);
+      renderLessonButtons();
+      return { d, progress, courseId, status: r.status, sid };
+    }
+
+    async function refreshCards() {
+      try {
+        const { d, progress, courseId } = await fetchDashboardData();
+        renderCards(d, progress, courseId);
+      } catch (err) {
+        document.getElementById('content').innerHTML =
+          `<div class="card"><p style="color:var(--danger)">Ошибка: ${err.message}</p></div>`;
+      }
+    }
+
+    async function loadDashboardJson() {
+      const { d, sid, status } = await fetchDashboardData();
+      showJson(`GET /dashboard/student/${sid}`, d, status);
+    }
+
+    async function loadDashboard(updateJson) {
+      const { d, progress, courseId, sid, status } = await fetchDashboardData();
+      renderCards(d, progress, courseId);
+      if (updateJson) showJson(`GET /dashboard/student/${sid}`, d, status);
+    }
+
+    document.getElementById('content').innerHTML =
+      '<div class="card"><p style="color: var(--muted)">Нажмите «Войти / токен» для начала работы.</p></div>';
+  </script>
+</body>
+</html>
